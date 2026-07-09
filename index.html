@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Simulador</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#000000">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="css/os.css">
+</head>
+<body>
+<div id="screen">
+  <div id="root"></div>
+  <div id="setupscreen">
+    <h1>Simulador — utilería de rodaje</h1>
+    <p>Este dispositivo se identifica con un código de sesión. El mismo código
+      debe ingresarse en el panel de control (<code>control.html</code>) para
+      poder disparar llamadas y alarmas desde otro celular o notebook.</p>
+    <input id="sessionInput" maxlength="8" placeholder="CÓDIGO">
+    <button class="primary" id="enterBtn">Iniciar simulador</button>
+    <div class="sync-mode" id="syncModeLabel"></div>
+  </div>
+</div>
+
+<script type="module">
+import { createSync, getSessionId, setSessionId } from "./js/sync.js";
+import { OS } from "./js/os.js";
+import { PhoneApp } from "./js/phone-app.js";
+import { ClockApp } from "./js/clock-app.js";
+import { isFirebaseConfigured } from "./js/firebase-config.js";
+
+const $setup = document.getElementById("setupscreen");
+const $sessionInput = document.getElementById("sessionInput");
+const $syncModeLabel = document.getElementById("syncModeLabel");
+const $root = document.getElementById("root");
+
+let sync = null;
+let os = null;
+let phoneApp = null;
+let clockApp = null;
+let currentConfig = null;
+
+function getConfig() {
+  return currentConfig || {};
+}
+
+function boot(sessionId) {
+  setSessionId(sessionId);
+  sync = createSync(sessionId);
+  $syncModeLabel.textContent = isFirebaseConfigured()
+    ? `Sesión ${sessionId} · sincronización remota (Firebase)`
+    : `Sesión ${sessionId} · modo local (misma pestaña/navegador)`;
+
+  if (!os) {
+    os = new OS($root, {
+      onExit: () => {
+        phoneApp?.endCall();
+        clockApp?.dismiss();
+        showSetup();
+      },
+      onLaunch: (id, fromEl) => {
+        if (id === "phone") phoneApp.open(fromEl);
+        else if (id === "clock") clockApp.open(fromEl);
+        else genericApp(id, fromEl);
+      },
+    });
+    phoneApp = new PhoneApp(os, getConfig);
+    clockApp = new ClockApp(os, getConfig);
+
+    sync.onConfigChange((cfg) => {
+      currentConfig = cfg;
+      os.applyConfig(cfg);
+    });
+
+    sync.onCommand((cmd) => {
+      if (!cmd || !cmd.type) return;
+      if (cmd.type === "incoming_call") phoneApp.incomingCall(cmd.payload || {});
+      else if (cmd.type === "end_call") phoneApp.endCall();
+      else if (cmd.type === "fire_alarm") clockApp.fire(cmd.payload || {});
+      else if (cmd.type === "dismiss_alarm") clockApp.dismiss();
+    });
+  }
+
+  hideSetup();
+  os.goLock();
+}
+
+const GENERIC_LABELS = {
+  message: "Mensajes", camera: "Cámara", settings: "Ajustes", gallery: "Fotos",
+  browser: "Navegador", calculator: "Calculadora", calendar: "Calendario",
+  maps: "Mapas", mail: "Correo", store: "Tienda",
+};
+function genericApp(id, fromEl) {
+  const node = document.createElement("div");
+  node.className = "app-window";
+  node.style.display = "flex";
+  node.style.alignItems = "center";
+  node.style.justifyContent = "center";
+  node.style.color = "rgba(255,255,255,.4)";
+  node.style.fontSize = "14px";
+  node.textContent = GENERIC_LABELS[id] || id;
+  node.addEventListener("click", () => os.closeApp());
+  os.showAppWindow(node, fromEl);
+}
+
+function showSetup() {
+  $sessionInput.value = getSessionId();
+  $setup.classList.remove("hidden");
+}
+function hideSetup() {
+  $setup.classList.add("hidden");
+}
+
+document.getElementById("enterBtn").addEventListener("click", () => {
+  const code = ($sessionInput.value || getSessionId()).trim().toUpperCase();
+  if (!code) return;
+  boot(code);
+});
+
+// Primer arranque: un link con ?s=CODIGO (ej. desde un QR) entra directo.
+// Si ya había sesión guardada en este dispositivo, también entra directo.
+// Si no hay nada, muestra la pantalla de configuración (equipo de rodaje).
+const urlCode = new URL(window.location.href).searchParams.get("s");
+const existing = localStorage.getItem("pn_sim_session");
+if (urlCode) {
+  boot(urlCode.trim().toUpperCase());
+} else if (existing) {
+  boot(existing);
+} else {
+  showSetup();
+}
+</script>
+</body>
+</html>

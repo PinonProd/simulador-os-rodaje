@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Control remoto — Simulador</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/control.css">
+</head>
+<body>
+<header>
+  <h1>Simulador — Panel de control</h1>
+  <div class="status" id="statusLabel">sin conectar</div>
+</header>
+
+<main>
+  <div class="card">
+    <h2>Sesión</h2>
+    <div class="field">
+      <label>Código de sesión (debe coincidir con el celular)</label>
+      <div class="row-inline">
+        <input id="sessionCode" maxlength="8" placeholder="CÓDIGO">
+        <button class="btn-accent" id="connectBtn">Conectar</button>
+      </div>
+    </div>
+    <div class="link-box">
+      <span id="deviceLink">El link para el celular aparecerá aquí…</span>
+      <button class="btn-outline" id="copyLink">Copiar</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Llamada — Contacto</h2>
+    <div class="grid2">
+      <div class="field"><label>Nombre</label><input id="c-name" placeholder="Mamá"></div>
+      <div class="field"><label>Número</label><input id="c-number" placeholder="+56 9 1234 5678"></div>
+    </div>
+    <div class="field"><label>Foto (URL, opcional)</label><input id="c-photo" placeholder="https://…"></div>
+    <div class="field">
+      <label>Tono</label>
+      <select id="c-ringtone">
+        <option value="clasico">Clásico</option>
+        <option value="marimba">Marimba</option>
+        <option value="suave">Suave</option>
+      </select>
+    </div>
+    <div class="actions-row">
+      <button class="btn-outline" id="saveContact">Guardar contacto</button>
+    </div>
+    <div class="actions-row" style="margin-top:14px;">
+      <button class="btn-accent" id="callNow">📞 Llamar ahora</button>
+      <button class="btn-danger" id="endCall">Terminar / colgar</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Alarma</h2>
+    <div class="grid2">
+      <div class="field"><label>Hora (referencia)</label><input id="a-time" type="time"></div>
+      <div class="field"><label>Etiqueta</label><input id="a-label" placeholder="Despertar"></div>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label>Sonido</label>
+        <select id="a-sound">
+          <option value="clasico">Clásico</option>
+          <option value="suave">Suave</option>
+          <option value="urgente">Urgente</option>
+        </select>
+      </div>
+      <div class="field"><label>Posponer (min)</label><input id="a-snooze" type="number" min="1" max="30" value="9"></div>
+    </div>
+    <div class="actions-row">
+      <button class="btn-outline" id="saveAlarm">Guardar alarma</button>
+    </div>
+    <div class="actions-row" style="margin-top:14px;">
+      <button class="btn-accent" id="fireAlarm">⏰ Sonar alarma ahora</button>
+      <button class="btn-danger" id="dismissAlarm">Detener alarma</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Dispositivo (status bar)</h2>
+    <div class="grid2">
+      <div class="field"><label>Batería (%)</label><input id="d-battery" type="number" min="1" max="100" value="84"></div>
+      <div class="field"><label>Señal (0–4 barras)</label><input id="d-signal" type="number" min="0" max="4" value="4"></div>
+    </div>
+    <div class="field"><label>Fondo de pantalla (URL, opcional)</label><input id="d-wallpaper" placeholder="https://…"></div>
+    <div class="field row-inline"><input type="checkbox" id="d-wifi" checked><label style="margin:0;">Wi-Fi activo</label></div>
+    <div class="actions-row">
+      <button class="btn-outline" id="saveDevice">Guardar dispositivo</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Actividad</h2>
+    <div id="log"></div>
+  </div>
+</main>
+
+<script type="module" src="js/control.js"></script>
+</body>
+</html>
