@@ -228,37 +228,46 @@ export class OS {
   }
 
   // -------- Gestos táctiles -------------------------------------------
+  // El gesto se resuelve DURANTE el movimiento (pointermove), no al soltar:
+  // así responde aunque el navegador se trague el pointerup (pasa en varios
+  // Android reales) y se siente inmediato, como el launcher de verdad.
   _bindGestures() {
-    let startY = null, startX = null, startedOn = null;
-    const THRESH = 55;
+    let startY = null, startX = null, startedOn = null, consumed = false;
+    const THRESH = 45;
 
-    const down = (x, y, target) => {
-      startX = x; startY = y;
-      startedOn = target.closest("#lockscreen") ? "lock"
-        : target.closest("#homescreen") ? "home"
-        : target.closest("#appdrawer") ? "drawer"
+    const down = (e) => {
+      startX = e.clientX; startY = e.clientY; consumed = false;
+      startedOn = e.target.closest("#lockscreen") ? "lock"
+        : e.target.closest("#appdrawer") ? "drawer"
+        : e.target.closest("#homescreen") ? "home"
         : null;
     };
-    const up = (x, y) => {
-      if (startY == null) return;
-      const dy = y - startY;
-      const dx = x - startX;
+    const move = (e) => {
+      if (startY == null || consumed || !startedOn) return;
+      const dy = e.clientY - startY;
+      const dx = e.clientX - startX;
       if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > THRESH) {
+        consumed = true;
         if (dy < 0) {
-          // swipe up
           if (startedOn === "lock") this.goHome();
           else if (startedOn === "home") this.goDrawer();
         } else {
-          // swipe down
           if (startedOn === "drawer") this.goHome();
         }
       }
-      startY = null;
     };
+    const end = () => { startY = null; startedOn = null; };
 
-    this.root.addEventListener("pointerdown", (e) => down(e.clientX, e.clientY, e.target));
-    this.root.addEventListener("pointerup", (e) => up(e.clientX, e.clientY));
-    this.root.addEventListener("pointercancel", () => { startY = null; });
+    this.root.addEventListener("pointerdown", down);
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", end);
+    window.addEventListener("pointercancel", end);
+
+    // El navegador móvil no debe hacer scroll/zoom/refresh con los dedos:
+    // solo las listas internas (cajón de apps, alarmas) pueden desplazarse.
+    document.addEventListener("touchmove", (e) => {
+      if (!e.target.closest(".drawer-grid, .alarm-list")) e.preventDefault();
+    }, { passive: false });
 
     this.$drawer.addEventListener("click", (e) => {
       if (e.target === this.$drawer) this.goHome();
