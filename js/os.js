@@ -258,6 +258,7 @@ export class OS {
 
     this.root.addEventListener("pointerdown", (e) => down(e.clientX, e.clientY, e.target));
     this.root.addEventListener("pointerup", (e) => up(e.clientX, e.clientY));
+    this.root.addEventListener("pointercancel", () => { startY = null; });
 
     this.$drawer.addEventListener("click", (e) => {
       if (e.target === this.$drawer) this.goHome();
