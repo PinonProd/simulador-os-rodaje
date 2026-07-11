@@ -29,6 +29,22 @@
   </div>
 
   <div class="card">
+    <h2>Hora del dispositivo</h2>
+    <div class="field row-inline">
+      <input type="checkbox" id="t-enabled">
+      <label style="margin:0;">Usar hora falsa (si está apagado, muestra la hora real)</label>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Hora</label><input id="t-value" type="time" value="04:56"></div>
+      <div class="field"><label>Fecha mostrada (opcional, texto libre)</label><input id="t-date" placeholder="vie, julio 10"></div>
+    </div>
+    <div class="actions-row">
+      <button class="btn-accent" id="applyTime">🕐 Aplicar hora ahora</button>
+    </div>
+    <p style="font-size:11px;color:#666;margin:10px 0 0;">La hora aplicada sigue avanzando sola en el celular desde ese punto (para que el reloj corra natural durante la toma). La alarma y la llamada muestran esta hora, y las alarmas creadas en el celular suenan según esta hora ficticia.</p>
+  </div>
+
+  <div class="card">
     <h2>Llamada — Contacto</h2>
     <div class="grid2">
       <div class="field"><label>Nombre</label><input id="c-name" placeholder="Mamá"></div>

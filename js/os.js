@@ -173,12 +173,35 @@ export class OS {
       this.$home.style.backgroundSize = "cover";
       this.$home.style.backgroundPosition = "center";
     }
+    this._tickClock();
+  }
+
+  // Fuente única de la hora para TODO el simulador. Si el panel de control
+  // fijó una hora falsa, se calcula desde ese punto y sigue corriendo sola
+  // (para que durante la toma el reloj avance con naturalidad).
+  getNow() {
+    const t = this.config?.time;
+    if (t && t.enabled && t.value) {
+      const [h, m] = String(t.value).split(":").map(Number);
+      const base = new Date();
+      base.setHours(h || 0, m || 0, 0, 0);
+      const elapsed = t.setAt ? Math.max(0, Date.now() - t.setAt) : 0;
+      return new Date(base.getTime() + elapsed);
+    }
+    return new Date();
+  }
+
+  // Fecha en texto: si el panel fijó una fecha, se muestra tal cual.
+  getDateText() {
+    const t = this.config?.time;
+    if (t && t.enabled && t.dateText) return t.dateText;
+    return fmtDate(this.getNow());
   }
 
   _tickClock() {
-    const now = new Date();
+    const now = this.getNow();
     const t = fmtTime(now);
-    const dt = fmtDate(now);
+    const dt = this.getDateText();
     this.$statusbar.querySelector(".sb-time").textContent = t;
     this.$lock.querySelector(".lock-clock").textContent = t;
     this.$lock.querySelector(".lock-date").textContent = dt;

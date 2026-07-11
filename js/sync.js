@@ -17,6 +17,10 @@ import { FIREBASE_CONFIG, isFirebaseConfigured } from "./firebase-config.js";
 const LS_PREFIX = "pn_sim_";
 const DEFAULT_CONFIG = {
   device: { carrier: "Entel", battery: 84, signal: 4, wifi: true },
+  // Hora falsa: cuando enabled=true, TODOS los relojes del simulador
+  // (status bar, bloqueo, inicio, alarma) muestran esta hora, que sigue
+  // avanzando sola desde el momento en que se aplicó (setAt).
+  time: { enabled: false, value: "04:56", dateText: "", setAt: 0 },
   wallpaperUrl: "",
   contact: {
     name: "Mamá",
@@ -94,11 +98,18 @@ class FirebaseBackend {
     this.sessionId = sessionId;
     this._configHandlers = [];
     this._commandHandlers = [];
-    this._ready = this._init();
+    // Si Firebase no carga (sin internet, red del set bloqueada), degradamos
+    // a modo local en vez de dejar el simulador mudo.
+    this._ready = this._init().catch((e) => {
+      console.warn("Firebase no disponible; usando modo local:", e?.message || e);
+      this._fallback = new LocalBackend(this.sessionId);
+      this._configHandlers.forEach((cb) => this._fallback.onConfigChange(cb));
+      this._commandHandlers.forEach((cb) => this._fallback.onCommand(cb));
+    });
   }
 
   get mode() {
-    return "firebase";
+    return this._fallback ? "local" : "firebase";
   }
 
   async _init() {
@@ -145,30 +156,38 @@ class FirebaseBackend {
 
   async getConfig() {
     await this._ready;
+    if (this._fallback) return this._fallback.getConfig();
     const snap = await this._dbApi.get(this.configRef);
     return snap.val() || structuredClone(DEFAULT_CONFIG);
   }
 
   async setConfig(partial) {
     await this._ready;
+    if (this._fallback) return this._fallback.setConfig(partial);
     await this._dbApi.update(this.configRef, flattenForUpdate(partial));
   }
 
   onConfigChange(cb) {
+    if (this._fallback) return this._fallback.onConfigChange(cb);
     this._configHandlers.push(cb);
-    this._ready.then(() => this._dbApi.get(this.configRef)).then((s) => {
-      if (s.val()) cb(s.val());
+    this._ready.then(() => {
+      if (this._fallback) return; // el catch de _init ya re-registró el handler
+      this._dbApi.get(this.configRef).then((s) => {
+        if (s.val()) cb(s.val());
+      });
     });
   }
 
   async sendCommand(type, payload = {}) {
     await this._ready;
+    if (this._fallback) return this._fallback.sendCommand(type, payload);
     const cmd = { id: uid(), type, payload, ts: Date.now() };
     await this._dbApi.set(this.commandRef, cmd);
     return cmd;
   }
 
   onCommand(cb) {
+    if (this._fallback) return this._fallback.onCommand(cb);
     this._commandHandlers.push(cb);
   }
 }

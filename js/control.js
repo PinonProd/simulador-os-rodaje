@@ -36,7 +36,21 @@ function readDeviceForm() {
   };
 }
 
+function readTimeForm() {
+  return {
+    enabled: $("t-enabled").checked,
+    value: $("t-value").value || "04:56",
+    dateText: $("t-date").value || "",
+    setAt: Date.now(),
+  };
+}
+
 function fillForms(cfg) {
+  if (cfg.time) {
+    $("t-enabled").checked = !!cfg.time.enabled;
+    $("t-value").value = cfg.time.value || "04:56";
+    $("t-date").value = cfg.time.dateText || "";
+  }
   if (cfg.contact) {
     $("c-name").value = cfg.contact.name || "";
     $("c-number").value = cfg.contact.number || "";
@@ -81,6 +95,15 @@ $("copyLink").addEventListener("click", async () => {
   if (!text || text.startsWith("El link")) return;
   await navigator.clipboard.writeText(text);
   log("Link del dispositivo copiado al portapapeles.");
+});
+
+$("applyTime").addEventListener("click", () => {
+  if (!sync) return log("Conéctate primero a una sesión.");
+  const t = readTimeForm();
+  sync.setConfig({ time: t });
+  log(t.enabled
+    ? `Hora falsa aplicada: <b>${t.value}</b>${t.dateText ? ` (${t.dateText})` : ""}.`
+    : "Hora falsa desactivada: el celular vuelve a la hora real.");
 });
 
 $("saveContact").addEventListener("click", () => {

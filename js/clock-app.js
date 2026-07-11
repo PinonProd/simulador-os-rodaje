@@ -135,7 +135,10 @@ export class ClockApp {
 
   _checkAlarms() {
     if (this.firing) return;
-    const now = new Date();
+    // Usa la hora del simulador (puede ser la falsa fijada desde el panel):
+    // si en la ficción son las 04:56 y el personaje puso alarma a las 05:00,
+    // debe sonar a las 05:00 ficticias, no a la hora real.
+    const now = this.os.getNow();
     const hhmm = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
     if (hhmm === this._lastCheckedMinute) return;
     this._lastCheckedMinute = hhmm;
@@ -152,21 +155,44 @@ export class ClockApp {
     const alarm = { ...cfg.alarm, ...overridePayload };
     playAlarm(alarm.sound || "clasico");
 
-    const now = new Date();
+    const now = this.os.getNow();
+    const hh = String(now.getHours()).padStart(2, "0");
+    const mm = String(now.getMinutes()).padStart(2, "0");
+    let snoozeMin = Number(alarm.snoozeMin) || 5;
+
     const node = document.createElement("div");
     node.className = "app-window open";
+    node.style.zIndex = "800"; // sobre la status bar: la alarma ocupa todo, como One UI
     node.innerHTML = `
       <div class="alarm-fire-screen">
-        <div class="alarm-fire-time">${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}</div>
-        <div class="alarm-fire-label">${alarm.label || "Alarma"}</div>
-        <div class="alarm-fire-actions">
-          <button class="alarm-fire-btn snooze">Posponer</button>
-          <button class="alarm-fire-btn dismiss">Detener</button>
+        <div class="af-clock"><div>${hh}</div><div>${mm}</div></div>
+        <div class="af-date">${this.os.getDateText()}</div>
+        <div class="af-label">${alarm.label || "Alarma"}</div>
+        <button class="af-dismiss" aria-label="Detener">
+          <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round">
+            <path d="M6 6l12 12M18 6L6 18"/>
+          </svg>
+        </button>
+        <div class="af-bottom">
+          <button class="af-adj minus">−</button>
+          <button class="af-snooze">Aplazar ${snoozeMin} min</button>
+          <button class="af-adj plus">+</button>
         </div>
       </div>`;
     this.os.$appRoot.appendChild(node);
-    node.querySelector(".dismiss").addEventListener("click", () => this.dismiss());
-    node.querySelector(".snooze").addEventListener("click", () => this.snooze(alarm));
+    node.querySelector(".af-dismiss").addEventListener("click", () => this.dismiss());
+    node.querySelector(".af-snooze").addEventListener("click", () =>
+      this.snooze({ ...alarm, snoozeMin })
+    );
+    const snoozeBtn = node.querySelector(".af-snooze");
+    node.querySelector(".af-adj.minus").addEventListener("click", () => {
+      snoozeMin = Math.max(5, snoozeMin - 5);
+      snoozeBtn.textContent = `Aplazar ${snoozeMin} min`;
+    });
+    node.querySelector(".af-adj.plus").addEventListener("click", () => {
+      snoozeMin = Math.min(30, snoozeMin + 5);
+      snoozeBtn.textContent = `Aplazar ${snoozeMin} min`;
+    });
     this._fireNode = node;
   }
 
@@ -182,7 +208,7 @@ export class ClockApp {
     this._fireNode?.remove();
     this._fireNode = null;
     this.firing = false;
-    const mins = alarm.snoozeMin || 9;
+    const mins = alarm.snoozeMin || 5;
     setTimeout(() => this.fire(alarm), mins * 60000);
   }
 }
