@@ -4,8 +4,8 @@
 // encima de cualquier pantalla (bloqueo, inicio, cajón) igual que Android.
 // ============================================================================
 
-import { ICONS } from "./os.js?v=3";
-import { playRingtone, stopAll } from "./sound.js?v=3";
+import { ICONS } from "./os.js?v=4";
+import { playRingtone, stopAll } from "./sound.js?v=4";
 
 function initials(name = "") {
   return name

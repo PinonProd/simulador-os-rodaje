@@ -1,4 +1,4 @@
-import { createSync, isFirebaseConfigured, DEFAULT_APPS } from "./sync.js?v=3";
+import { createSync, isFirebaseConfigured, DEFAULT_APPS } from "./sync.js?v=4";
 
 const $ = (id) => document.getElementById(id);
 const LS_LAST = "pn_ctrl_last_session";

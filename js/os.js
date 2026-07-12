@@ -38,6 +38,13 @@ export const ICONS = {
   },
   wifi: `<svg viewBox="0 0 24 18" width="18" height="14" fill="#fff"><path d="M12 15.5a1.8 1.8 0 110-3.6 1.8 1.8 0 010 3.6zM7.8 10.6a6 6 0 018.4 0l-1.4 1.5a4 4 0 00-5.6 0l-1.4-1.5zM4.6 7.4a10.5 10.5 0 0114.8 0l-1.4 1.5a8.5 8.5 0 00-12 0L4.6 7.4z"/></svg>`,
   battery: (pct) => `<svg viewBox="0 0 26 14" width="24" height="13"><rect x="1" y="1.5" width="21" height="11" rx="2.5" stroke="#fff" stroke-opacity=".6" fill="none"/><rect x="23" y="5" width="2" height="4" rx="1" fill="#fff" fill-opacity=".6"/><rect x="2.5" y="3" width="${17 * (pct / 100)}" height="8" rx="1.3" fill="${pct <= 15 ? '#f28b82' : '#fff'}"/></svg>`,
+  // Íconos del panel de ajustes rápidos (referencia: One UI Design Kit)
+  qsWifi: `<svg viewBox="0 0 24 18" width="22" height="17" fill="currentColor"><path d="M12 15.5a1.8 1.8 0 110-3.6 1.8 1.8 0 010 3.6zM7.8 10.6a6 6 0 018.4 0l-1.4 1.5a4 4 0 00-5.6 0l-1.4-1.5zM4.6 7.4a10.5 10.5 0 0114.8 0l-1.4 1.5a8.5 8.5 0 00-12 0L4.6 7.4z"/></svg>`,
+  qsBluetooth: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7l10 10-5 4V3l5 4L7 17"/></svg>`,
+  qsFlight: `<svg viewBox="0 0 24 24" width="21" height="21" fill="currentColor"><path d="M2 16l20-6-2-2-7 1-5-6-2 .5 3 6.5-6 1.5-2-1.5-1.5.5L2 14z"/></svg>`,
+  qsFlashlight: `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M9 2h6v4l-2 2v12l-1 2-1-2V8L9 6z"/></svg>`,
+  qsRotate: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M18 8a6 6 0 10-11 3.5" stroke-linecap="round" fill="none"/><path d="M8.5 8.5L7 11.5l3.3.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
+  qsDnd: `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm-5 9h10v2H7v-2z"/></svg>`,
 };
 
 const APPS = [
@@ -112,6 +119,21 @@ export class OS {
       </div>
       <div id="app-root"></div>
       <div class="gesture-pill"></div>
+      <div id="shade">
+        <div class="shade-panel">
+          <div class="shade-handle"></div>
+          <div class="shade-qs-grid"></div>
+          <div class="shade-slider-row">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="#fff" opacity=".7"><path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5v2m0 16v2M4.2 4.2l1.4 1.4m12.8 12.8l1.4 1.4M2 12h2m16 0h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+            <input type="range" min="1" max="100" value="80" class="shade-brightness">
+          </div>
+          <div class="shade-noti-header">
+            <span>Notificaciones</span>
+            <button class="shade-clear">Borrar todo</button>
+          </div>
+          <div class="shade-noti-list"></div>
+        </div>
+      </div>
     `;
     this.$statusbar = this.root.querySelector(".statusbar");
     this.$lock = this.root.querySelector("#lockscreen");
@@ -121,10 +143,74 @@ export class OS {
     this.$homeGrid = this.root.querySelector(".app-grid");
     this.$dock = this.root.querySelector(".dock");
     this.$drawerGrid = this.root.querySelector(".drawer-grid");
+    this.$shade = this.root.querySelector("#shade");
+    this.$shadeQsGrid = this.root.querySelector(".shade-qs-grid");
+    this.$shadeNotiList = this.root.querySelector(".shade-noti-list");
+    this._notifications = [];
+    this._qs = {
+      wifi: true, bluetooth: false, flight: false,
+      flashlight: false, rotate: false, dnd: false,
+    };
 
     this._renderAll();
+    this._renderQsGrid();
+    this._renderNotiList();
     this._bindGestures();
+    this._bindShade();
   }
+
+  _renderQsGrid() {
+    const TILES = [
+      ["wifi", "qsWifi", "Wi-Fi"],
+      ["bluetooth", "qsBluetooth", "Bluetooth"],
+      ["flight", "qsFlight", "Modo avión"],
+      ["flashlight", "qsFlashlight", "Linterna"],
+      ["rotate", "qsRotate", "Auto-rotar"],
+      ["dnd", "qsDnd", "No molestar"],
+    ];
+    this.$shadeQsGrid.innerHTML = "";
+    TILES.forEach(([key, icon, label]) => {
+      const tile = el("div", `shade-qs-tile${this._qs[key] ? " active" : ""}`);
+      tile.innerHTML = `<div class="shade-qs-circle">${ICONS[icon]}</div><span class="qs-label">${label}</span>`;
+      tile.addEventListener("click", () => {
+        this._qs[key] = !this._qs[key];
+        this._renderQsGrid();
+      });
+      this.$shadeQsGrid.appendChild(tile);
+    });
+  }
+
+  _renderNotiList() {
+    this.$shadeNotiList.innerHTML = "";
+    if (!this._notifications.length) {
+      this.$shadeNotiList.innerHTML = `<div class="shade-empty">Sin notificaciones</div>`;
+      return;
+    }
+    this._notifications.slice().reverse().forEach((n) => {
+      const card = el("div", "shade-noti-card");
+      card.innerHTML = `
+        <div class="sn-icon">${n.emoji || "🔔"}</div>
+        <div class="sn-body">
+          <div class="sn-app"><span>${n.app || "Notificación"}</span><span>ahora</span></div>
+          ${n.title ? `<div class="sn-title">${n.title}</div>` : ""}
+          ${n.text ? `<div class="sn-text">${n.text}</div>` : ""}
+        </div>`;
+      this.$shadeNotiList.appendChild(card);
+    });
+  }
+
+  _bindShade() {
+    this.$shade.addEventListener("click", (e) => {
+      if (e.target === this.$shade) this.closeShade();
+    });
+    this.root.querySelector(".shade-clear").addEventListener("click", () => {
+      this._notifications = [];
+      this._renderNotiList();
+    });
+  }
+
+  openShade() { this.$shade.classList.add("open"); }
+  closeShade() { this.$shade.classList.remove("open"); }
 
   // Apps activas: las de la config (editables desde el panel) o las de fábrica.
   _appsList() {
@@ -205,6 +291,8 @@ export class OS {
   // Notificación heads-up (cae desde arriba, como Android). Configurable:
   // nombre de app, emoji/inicial, título, texto. Se cierra sola o al tocarla.
   showNotification({ app = "Mensajes", emoji = "💬", title = "", text = "" } = {}) {
+    this._notifications.push({ app, emoji, title, text, ts: Date.now() });
+    this._renderNotiList();
     this.root.querySelector(".heads-up")?.remove();
     const node = el("div", "heads-up");
     node.innerHTML = `
@@ -266,16 +354,19 @@ export class OS {
     this.state = "lock";
     this.$lock.classList.remove("hidden");
     this.$drawer.classList.remove("open");
+    this.closeShade();
   }
   goHome() {
     this.state = "home";
     this.$lock.classList.add("hidden");
     this.$drawer.classList.remove("open");
     this.closeApp();
+    this.closeShade();
   }
   goDrawer() {
     this.state = "drawer";
     this.$drawer.classList.add("open");
+    this.closeShade();
   }
 
   launchApp(id, fromEl) {
@@ -310,7 +401,10 @@ export class OS {
 
     const down = (e) => {
       startX = e.clientX; startY = e.clientY; consumed = false;
-      startedOn = e.target.closest("#lockscreen") ? "lock"
+      // Deslizar hacia abajo empezando en la barra de estado (arriba de
+      // todo) abre el panel de notificaciones, sin importar la pantalla.
+      startedOn = e.clientY <= 34 ? "statusbar"
+        : e.target.closest("#lockscreen") ? "lock"
         : e.target.closest("#appdrawer") ? "drawer"
         : e.target.closest("#homescreen") ? "home"
         : null;
@@ -325,7 +419,8 @@ export class OS {
           if (startedOn === "lock") this.goHome();
           else if (startedOn === "home") this.goDrawer();
         } else {
-          if (startedOn === "drawer") this.goHome();
+          if (startedOn === "statusbar") this.openShade();
+          else if (startedOn === "drawer") this.goHome();
         }
       }
     };
@@ -339,7 +434,7 @@ export class OS {
     // El navegador móvil no debe hacer scroll/zoom/refresh con los dedos:
     // solo las listas internas (cajón de apps, alarmas) pueden desplazarse.
     document.addEventListener("touchmove", (e) => {
-      if (!e.target.closest(".drawer-grid, .alarm-list")) e.preventDefault();
+      if (!e.target.closest(".drawer-grid, .alarm-list, .shade-panel")) e.preventDefault();
     }, { passive: false });
 
     this.$drawer.addEventListener("click", (e) => {
