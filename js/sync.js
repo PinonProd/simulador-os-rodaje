@@ -12,7 +12,7 @@
 // navegador. Sirve para probar todo el flujo antes de configurar Firebase.
 // ============================================================================
 
-import { FIREBASE_CONFIG, isFirebaseConfigured } from "./firebase-config.js";
+import { FIREBASE_CONFIG, isFirebaseConfigured } from "./firebase-config.js?v=3";
 
 const LS_PREFIX = "pn_sim_";
 
