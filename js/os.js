@@ -17,6 +17,9 @@ export const ICONS = {
   maps: `<svg viewBox="0 0 24 24" width="26" height="26" fill="#fff"><path d="M12 2a7 7 0 00-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 00-7-7zm0 9.7A2.7 2.7 0 1112 6.3a2.7 2.7 0 010 5.4z"/></svg>`,
   mail: `<svg viewBox="0 0 24 24" width="26" height="26" fill="#fff"><path d="M3 5h18a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V6a1 1 0 011-1zm9 8l8-6H4z"/></svg>`,
   store: `<svg viewBox="0 0 24 24" width="26" height="26" fill="#fff"><path d="M4 4h16l1 5H3l1-5zm-1 7h18v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9zm5 2v4h2v-4H8zm6 0v4h2v-4h-2z"/></svg>`,
+  chat: `<svg viewBox="0 0 24 24" width="26" height="26" fill="#fff"><path d="M12 3a9 9 0 00-7.8 13.5L3 21l4.7-1.2A9 9 0 1012 3zm4.4 12.4c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-3.1-.7-2.6-1.1-4.2-3.7-4.3-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2.1.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.4l.8 2c.1.2.1.4 0 .6l-.4.6c-.2.2-.3.4-.1.7.1.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1c.2-.2.4-.3.6-.2l1.9.9c.2.1.4.2.4.3.1.2.1.5-.2.8z"/></svg>`,
+  social: `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#fff" stroke-width="1.8"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.3" fill="#fff" stroke="none"/></svg>`,
+  play: `<svg viewBox="0 0 24 24" width="26" height="26" fill="#fff"><path d="M4 7.5A3.5 3.5 0 017.5 4h9A3.5 3.5 0 0120 7.5v9a3.5 3.5 0 01-3.5 3.5h-9A3.5 3.5 0 014 16.5v-9zM10 8.5v7l6-3.5-6-3.5z"/></svg>`,
   exit: `<svg viewBox="0 0 24 24" width="24" height="24" fill="#fff"><path d="M10 17l-1.4-1.4 2.6-2.6H4v-2h7.2L8.6 8.4 10 7l5 5-5 5zM19 4h-7v2h7v12h-7v2h7a2 2 0 002-2V6a2 2 0 00-2-2z"/></svg>`,
   micOn: `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 14a3 3 0 003-3V6a3 3 0 00-6 0v5a3 3 0 003 3zm5-3a5 5 0 01-10 0H5a7 7 0 006 6.9V21h2v-3.1A7 7 0 0019 11h-2z"/></svg>`,
   keypad: `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><circle cx="6" cy="6" r="1.6"/><circle cx="12" cy="6" r="1.6"/><circle cx="18" cy="6" r="1.6"/><circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/><circle cx="6" cy="18" r="1.6"/><circle cx="12" cy="18" r="1.6"/><circle cx="18" cy="18" r="1.6"/></svg>`,
@@ -119,16 +122,26 @@ export class OS {
     this.$dock = this.root.querySelector(".dock");
     this.$drawerGrid = this.root.querySelector(".drawer-grid");
 
-    this._renderIcons(this.$homeGrid, APPS.filter((a) => !DOCK_IDS.includes(a.id)));
-    this._renderIcons(this.$dock, APPS.filter((a) => DOCK_IDS.includes(a.id)));
-    this._renderDrawer();
+    this._renderAll();
     this._bindGestures();
+  }
+
+  // Apps activas: las de la config (editables desde el panel) o las de fábrica.
+  _appsList() {
+    const list = this.config?.apps;
+    return Array.isArray(list) && list.length ? list : APPS;
   }
 
   _iconNode(app) {
     const wrap = el("div", "app-icon-wrap");
     wrap.dataset.app = app.id;
-    wrap.innerHTML = `<div class="app-icon" style="background:${app.color}">${ICONS[app.icon]}</div><div class="app-label">${app.label}</div>`;
+    const glyph = app.emoji
+      ? `<span style="font-size:27px;line-height:1;">${app.emoji}</span>`
+      : (ICONS[app.icon] || `<span style="font-size:22px;font-weight:700;">${(app.label || "?")[0].toUpperCase()}</span>`);
+    const badge = Number(app.badge) > 0
+      ? `<span class="app-badge">${app.badge > 99 ? "99+" : app.badge}</span>`
+      : "";
+    wrap.innerHTML = `<div class="app-icon" style="background:${app.color || "#4b5563"}">${glyph}</div>${badge}<div class="app-label">${app.label}</div>`;
     wrap.addEventListener("click", (e) => this._ripple(e, wrap) && this.launchApp(app.id, wrap));
     return wrap;
   }
@@ -138,9 +151,16 @@ export class OS {
     list.forEach((app) => container.appendChild(this._iconNode(app)));
   }
 
-  _renderDrawer() {
+  _renderAll() {
+    const apps = this._appsList();
+    this._renderIcons(this.$homeGrid, apps.filter((a) => a.home && !a.dock));
+    this._renderIcons(this.$dock, apps.filter((a) => a.dock).slice(0, 4));
+    this._renderDrawer(apps);
+  }
+
+  _renderDrawer(apps = this._appsList()) {
     this.$drawerGrid.innerHTML = "";
-    APPS.forEach((app) => this.$drawerGrid.appendChild(this._iconNode(app)));
+    apps.forEach((app) => this.$drawerGrid.appendChild(this._iconNode(app)));
     const exit = el("div", "app-icon-wrap exit-icon");
     exit.innerHTML = `<div class="app-icon">${ICONS.exit}</div><div class="app-label">Salir del simulador</div>`;
     exit.addEventListener("click", () => this.onExit());
@@ -173,7 +193,36 @@ export class OS {
       this.$home.style.backgroundSize = "cover";
       this.$home.style.backgroundPosition = "center";
     }
+    // Estilo de íconos: forma y tema (de color / oscuro tipo tema One UI)
+    const is = cfg.iconStyle || {};
+    this.root.classList.remove("icon-shape-circle", "icon-shape-square", "icon-shape-rounded");
+    this.root.classList.add(`icon-shape-${is.shape || "rounded"}`);
+    this.root.classList.toggle("icons-dark", is.theme === "dark");
+    this._renderAll();
     this._tickClock();
+  }
+
+  // Notificación heads-up (cae desde arriba, como Android). Configurable:
+  // nombre de app, emoji/inicial, título, texto. Se cierra sola o al tocarla.
+  showNotification({ app = "Mensajes", emoji = "💬", title = "", text = "" } = {}) {
+    this.root.querySelector(".heads-up")?.remove();
+    const node = el("div", "heads-up");
+    node.innerHTML = `
+      <div class="hu-icon">${emoji || (app[0] || "•").toUpperCase()}</div>
+      <div class="hu-text">
+        <div class="hu-app">${app} · ahora</div>
+        ${title ? `<div class="hu-title">${title}</div>` : ""}
+        ${text ? `<div class="hu-sub">${text}</div>` : ""}
+      </div>`;
+    this.root.appendChild(node);
+    const close = () => {
+      node.style.transition = "transform .3s cubic-bezier(.2,0,0,1), opacity .3s";
+      node.style.transform = "translateY(-130%)";
+      node.style.opacity = "0";
+      setTimeout(() => node.remove(), 320);
+    };
+    node.addEventListener("click", close);
+    setTimeout(() => { if (node.isConnected) close(); }, 6500);
   }
 
   // Fuente única de la hora para TODO el simulador. Si el panel de control
@@ -230,7 +279,8 @@ export class OS {
   }
 
   launchApp(id, fromEl) {
-    this.onLaunch(id, fromEl);
+    const app = this._appsList().find((a) => a.id === id);
+    this.onLaunch(id, fromEl, app?.label);
   }
 
   showAppWindow(node, fromEl) {

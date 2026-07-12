@@ -93,6 +93,38 @@ html, body {
 .lock-hint .chevrons { display:flex; flex-direction:column; gap:-4px; opacity:.8; animation: chevbounce 1.6s ease-in-out infinite; }
 @keyframes chevbounce { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-6px);} }
 
+/* Notificación heads-up (cae desde arriba, sobre cualquier pantalla) */
+.heads-up {
+  position: absolute;
+  top: 38px; left: 3%; right: 3%;
+  background: rgba(38,40,46,.97);
+  border-radius: 24px;
+  padding: 13px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.55);
+  animation: dropin .38s cubic-bezier(.2,0,0,1);
+  z-index: 750;
+  cursor: pointer;
+}
+@keyframes dropin { from { transform: translateY(-130%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.heads-up .hu-icon {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: #3a3d44;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 21px;
+}
+.hu-text { flex: 1; min-width: 0; padding-top: 1px; }
+.hu-app { font-size: 12px; opacity: .65; margin-bottom: 2px; }
+.hu-title { font-size: 14.5px; font-weight: 600; }
+.hu-sub {
+  font-size: 13.5px; opacity: .85; margin-top: 1px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 /* Home screen */
 #homescreen {
   background: linear-gradient(160deg, #14171c 0%, #05070a 55%, #000 100%);
@@ -114,6 +146,36 @@ html, body {
 .app-icon-wrap {
   display: flex; flex-direction: column; align-items: center; gap: 6px;
   cursor: pointer;
+  position: relative;
+}
+
+/* Globo de notificaciones sobre el ícono */
+.app-badge {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  margin-left: 15px;
+  min-width: 19px; height: 19px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: #f24a3d;
+  color: #fff;
+  font-size: 11.5px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,.4);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Formas de ícono configurables desde el panel */
+.icon-shape-circle .app-icon { border-radius: 50%; }
+.icon-shape-rounded .app-icon { border-radius: 16px; }
+.icon-shape-square .app-icon { border-radius: 7px; }
+
+/* Tema oscuro de íconos (como el tema oscuro de One UI: todos grafito) */
+.icons-dark .app-icon {
+  background: #26282e !important;
+  border: 1px solid rgba(255,255,255,.07);
 }
 .app-icon {
   width: 56px; height: 56px; border-radius: 16px;

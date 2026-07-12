@@ -30,6 +30,7 @@ import { createSync, getSessionId, setSessionId } from "./js/sync.js";
 import { OS } from "./js/os.js";
 import { PhoneApp } from "./js/phone-app.js";
 import { ClockApp } from "./js/clock-app.js";
+import { playDing } from "./js/sound.js";
 import { isFirebaseConfigured } from "./js/firebase-config.js";
 
 const $setup = document.getElementById("setupscreen");
@@ -91,10 +92,10 @@ function boot(sessionId) {
         if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
         showSetup();
       },
-      onLaunch: (id, fromEl) => {
+      onLaunch: (id, fromEl, label) => {
         if (id === "phone") phoneApp.open(fromEl);
         else if (id === "clock") clockApp.open(fromEl);
-        else genericApp(id, fromEl);
+        else genericApp(id, fromEl, label);
       },
     });
     phoneApp = new PhoneApp(os, getConfig);
@@ -111,6 +112,10 @@ function boot(sessionId) {
       else if (cmd.type === "end_call") phoneApp.endCall();
       else if (cmd.type === "fire_alarm") clockApp.fire(cmd.payload || {});
       else if (cmd.type === "dismiss_alarm") clockApp.dismiss();
+      else if (cmd.type === "notify") {
+        os.showNotification(cmd.payload || {});
+        if (cmd.payload?.sound !== false) playDing();
+      }
     });
   }
 
@@ -118,12 +123,7 @@ function boot(sessionId) {
   os.goLock();
 }
 
-const GENERIC_LABELS = {
-  message: "Mensajes", camera: "Cámara", settings: "Ajustes", gallery: "Fotos",
-  browser: "Navegador", calculator: "Calculadora", calendar: "Calendario",
-  maps: "Mapas", mail: "Correo", store: "Tienda",
-};
-function genericApp(id, fromEl) {
+function genericApp(id, fromEl, label) {
   const node = document.createElement("div");
   node.className = "app-window";
   node.style.display = "flex";
@@ -131,7 +131,7 @@ function genericApp(id, fromEl) {
   node.style.justifyContent = "center";
   node.style.color = "rgba(255,255,255,.4)";
   node.style.fontSize = "14px";
-  node.textContent = GENERIC_LABELS[id] || id;
+  node.textContent = label || id;
   node.addEventListener("click", () => os.closeApp());
   os.showAppWindow(node, fromEl);
 }

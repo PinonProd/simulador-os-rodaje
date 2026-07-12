@@ -1,4 +1,4 @@
-import { createSync, isFirebaseConfigured } from "./sync.js";
+import { createSync, isFirebaseConfigured, DEFAULT_APPS } from "./sync.js";
 
 const $ = (id) => document.getElementById(id);
 const LS_LAST = "pn_ctrl_last_session";
@@ -45,7 +45,60 @@ function readTimeForm() {
   };
 }
 
+// ---- Editor de apps -------------------------------------------------------
+let appsList = structuredClone(DEFAULT_APPS);
+
+function renderAppsEditor() {
+  const box = $("appsEditor");
+  box.innerHTML = `
+    <div class="app-row header">
+      <span></span><span></span><span>Nombre</span><span>Emoji</span><span>Globo</span>
+      <span style="justify-self:center;">Inicio</span><span style="justify-self:center;">Dock</span><span></span>
+    </div>`;
+  appsList.forEach((app, i) => {
+    const row = document.createElement("div");
+    row.className = "app-row";
+    row.innerHTML = `
+      <button class="mini up" title="Subir">▲</button>
+      <button class="mini down" title="Bajar">▼</button>
+      <input type="text" class="f-label" value="${(app.label || "").replace(/"/g, "&quot;")}">
+      <input type="text" class="f-emoji" value="${app.emoji || ""}" maxlength="4" placeholder="auto">
+      <input type="number" class="f-badge" value="${app.badge || 0}" min="0" max="999">
+      <input type="checkbox" class="f-home" ${app.home ? "checked" : ""}>
+      <input type="checkbox" class="f-dock" ${app.dock ? "checked" : ""}>
+      <button class="mini del" title="Eliminar">✕</button>`;
+    row.querySelector(".up").addEventListener("click", () => {
+      if (i === 0) return;
+      [appsList[i - 1], appsList[i]] = [appsList[i], appsList[i - 1]];
+      renderAppsEditor();
+    });
+    row.querySelector(".down").addEventListener("click", () => {
+      if (i === appsList.length - 1) return;
+      [appsList[i + 1], appsList[i]] = [appsList[i], appsList[i + 1]];
+      renderAppsEditor();
+    });
+    row.querySelector(".del").addEventListener("click", () => {
+      appsList.splice(i, 1);
+      renderAppsEditor();
+    });
+    row.querySelector(".f-label").addEventListener("input", (e) => { app.label = e.target.value; });
+    row.querySelector(".f-emoji").addEventListener("input", (e) => { app.emoji = e.target.value; });
+    row.querySelector(".f-badge").addEventListener("input", (e) => { app.badge = Number(e.target.value) || 0; });
+    row.querySelector(".f-home").addEventListener("change", (e) => { app.home = e.target.checked; });
+    row.querySelector(".f-dock").addEventListener("change", (e) => { app.dock = e.target.checked; });
+    box.appendChild(row);
+  });
+}
+
 function fillForms(cfg) {
+  if (Array.isArray(cfg.apps) && cfg.apps.length) {
+    appsList = structuredClone(cfg.apps);
+    renderAppsEditor();
+  }
+  if (cfg.iconStyle) {
+    $("i-shape").value = cfg.iconStyle.shape || "rounded";
+    $("i-theme").value = cfg.iconStyle.theme || "color";
+  }
   if (cfg.time) {
     $("t-enabled").checked = !!cfg.time.enabled;
     $("t-value").value = cfg.time.value || "04:56";
@@ -97,6 +150,40 @@ $("copyLink").addEventListener("click", async () => {
   log("Link del dispositivo copiado al portapapeles.");
 });
 
+$("sendNotify").addEventListener("click", () => {
+  if (!sync) return log("Conéctate primero a una sesión.");
+  const payload = {
+    app: $("n-app").value || "Mensajes",
+    emoji: $("n-emoji").value || "💬",
+    title: $("n-title").value || "",
+    text: $("n-text").value || "",
+    sound: $("n-sound").checked,
+  };
+  sync.sendCommand("notify", payload);
+  log(`Notificación enviada: <b>${payload.app}</b>${payload.title ? " — " + payload.title : ""}.`);
+});
+
+$("saveIconStyle").addEventListener("click", () => {
+  if (!sync) return log("Conéctate primero a una sesión.");
+  sync.setConfig({ iconStyle: { shape: $("i-shape").value, theme: $("i-theme").value } });
+  log("Estilo de íconos aplicado.");
+});
+
+$("saveApps").addEventListener("click", () => {
+  if (!sync) return log("Conéctate primero a una sesión.");
+  sync.setConfig({ apps: appsList });
+  log(`Apps guardadas (${appsList.length}).`);
+});
+
+$("addApp").addEventListener("click", () => {
+  appsList.push({
+    id: `custom-${Date.now()}`,
+    label: "Nueva app", icon: "", emoji: "⭐", color: "#4b5563",
+    badge: 0, home: true, dock: false,
+  });
+  renderAppsEditor();
+});
+
 $("applyTime").addEventListener("click", () => {
   if (!sync) return log("Conéctate primero a una sesión.");
   const t = readTimeForm();
@@ -142,6 +229,8 @@ $("dismissAlarm").addEventListener("click", () => {
   sync.sendCommand("dismiss_alarm");
   log("Comando enviado: <b>detener alarma</b>.");
 });
+
+renderAppsEditor();
 
 const last = localStorage.getItem(LS_LAST);
 if (last) {

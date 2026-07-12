@@ -95,6 +95,54 @@
   </div>
 
   <div class="card">
+    <h2>Notificación personalizada</h2>
+    <div class="grid2">
+      <div class="field"><label>App</label><input id="n-app" placeholder="WhatsApp" value="WhatsApp"></div>
+      <div class="field"><label>Emoji del ícono</label><input id="n-emoji" placeholder="💬" value="💬" maxlength="4"></div>
+    </div>
+    <div class="field"><label>Título (ej. quién escribe)</label><input id="n-title" placeholder="Mamá"></div>
+    <div class="field"><label>Texto del mensaje</label><input id="n-text" placeholder="¿Dónde estás? Llámame"></div>
+    <div class="field row-inline"><input type="checkbox" id="n-sound" checked><label style="margin:0;">Con sonido</label></div>
+    <div class="actions-row">
+      <button class="btn-accent" id="sendNotify">🔔 Enviar notificación ahora</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Estilo de íconos</h2>
+    <div class="grid2">
+      <div class="field">
+        <label>Forma</label>
+        <select id="i-shape">
+          <option value="rounded">Redondeados (cuadrado suave)</option>
+          <option value="circle">Circulares</option>
+          <option value="square">Cuadrados</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tema</label>
+        <select id="i-theme">
+          <option value="color">De colores</option>
+          <option value="dark">Oscuros (tema grafito)</option>
+        </select>
+      </div>
+    </div>
+    <div class="actions-row">
+      <button class="btn-outline" id="saveIconStyle">Aplicar estilo</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Apps y pantalla de inicio</h2>
+    <p style="font-size:11px;color:#666;margin:0 0 12px;">Orden con ▲▼ (el orden manda en inicio y cajón). "Inicio" = aparece en la pantalla principal. "Dock" = barra inferior (máx. 4). El globo rojo es el número de notificaciones pendientes. Emoji reemplaza el ícono (útil para apps propias).</p>
+    <div id="appsEditor"></div>
+    <div class="actions-row">
+      <button class="btn-outline" id="addApp">+ Agregar app</button>
+      <button class="btn-accent" id="saveApps">Guardar apps</button>
+    </div>
+  </div>
+
+  <div class="card">
     <h2>Dispositivo (status bar)</h2>
     <div class="grid2">
       <div class="field"><label>Batería (%)</label><input id="d-battery" type="number" min="1" max="100" value="84"></div>

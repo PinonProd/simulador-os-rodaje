@@ -76,6 +76,30 @@ button {
 }
 .link-box button { flex-shrink: 0; padding: 8px 12px; font-size: 12px; }
 
+/* Editor de apps */
+.app-row {
+  display: grid;
+  grid-template-columns: 24px 24px 1fr 52px 52px 42px 42px 24px;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 7px;
+}
+.app-row.header {
+  font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: .5px;
+  margin-bottom: 4px;
+}
+.app-row input[type="text"] { padding: 7px 8px; font-size: 13px; }
+.app-row input[type="number"] { padding: 7px 4px; font-size: 13px; text-align: center; }
+.app-row input[type="checkbox"] { width: auto; justify-self: center; }
+.app-row .mini {
+  width: 24px; height: 24px; padding: 0;
+  border-radius: 6px; border: 1px solid #333;
+  background: #171717; color: #aaa; font-size: 12px;
+  display: flex; align-items: center; justify-content: center;
+}
+.app-row .mini:hover { color: #f0c419; border-color: #f0c419; }
+.app-row .mini.del:hover { color: #ff8a80; border-color: #ff8a80; }
+
 #log {
   font-size: 12px; color: #666; max-height: 140px; overflow-y: auto;
   display: flex; flex-direction: column-reverse; gap: 4px;

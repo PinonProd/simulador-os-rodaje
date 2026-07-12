@@ -109,5 +109,12 @@ export function stopAll() {
   }
 }
 
+// "Ding" corto de notificación (no en bucle, no interrumpe llamada/alarma)
+export function playDing() {
+  const c = getCtx();
+  tone(c, 880, 0, 0.12, 0.16, "sine");
+  tone(c, 1318, 0.1, 0.28, 0.13, "sine");
+}
+
 export const RINGTONE_NAMES = Object.keys(RINGTONES);
 export const ALARM_SOUND_NAMES = Object.keys(ALARMS);

@@ -15,6 +15,28 @@
 import { FIREBASE_CONFIG, isFirebaseConfigured } from "./firebase-config.js";
 
 const LS_PREFIX = "pn_sim_";
+
+// Lista de apps por defecto. El panel de control puede reordenarlas,
+// renombrarlas, cambiarles el globo de notificaciones (badge), decidir
+// cuáles van en el inicio/dock, y agregar apps propias con emoji.
+const DEFAULT_APPS = [
+  { id: "phone", label: "Teléfono", icon: "phone", emoji: "", color: "#2fbf59", badge: 0, home: false, dock: true },
+  { id: "message", label: "Mensajes", icon: "message", emoji: "", color: "#3b82f6", badge: 0, home: false, dock: true },
+  { id: "camera", label: "Cámara", icon: "camera", emoji: "", color: "#6b7280", badge: 0, home: false, dock: true },
+  { id: "clock", label: "Reloj", icon: "clock", emoji: "", color: "#374151", badge: 0, home: false, dock: true },
+  { id: "chat", label: "WhatsApp", icon: "chat", emoji: "", color: "#25D366", badge: 0, home: true, dock: false },
+  { id: "social", label: "Instagram", icon: "social", emoji: "", color: "#d63076", badge: 0, home: true, dock: false },
+  { id: "play", label: "YouTube", icon: "play", emoji: "", color: "#e02f2f", badge: 0, home: true, dock: false },
+  { id: "settings", label: "Ajustes", icon: "settings", emoji: "", color: "#5f6368", badge: 0, home: true, dock: false },
+  { id: "gallery", label: "Fotos", icon: "gallery", emoji: "", color: "#f59e0b", badge: 0, home: true, dock: false },
+  { id: "browser", label: "Navegador", icon: "browser", emoji: "", color: "#4285f4", badge: 0, home: true, dock: false },
+  { id: "calculator", label: "Calculadora", icon: "calculator", emoji: "", color: "#4b5563", badge: 0, home: true, dock: false },
+  { id: "calendar", label: "Calendario", icon: "calendar", emoji: "", color: "#1a73e8", badge: 0, home: true, dock: false },
+  { id: "maps", label: "Mapas", icon: "maps", emoji: "", color: "#34a853", badge: 0, home: true, dock: false },
+  { id: "mail", label: "Correo", icon: "mail", emoji: "", color: "#ea4335", badge: 0, home: true, dock: false },
+  { id: "store", label: "Tienda", icon: "store", emoji: "", color: "#0f9d58", badge: 0, home: true, dock: false },
+];
+
 const DEFAULT_CONFIG = {
   device: { carrier: "Entel", battery: 84, signal: 4, wifi: true },
   // Hora falsa: cuando enabled=true, TODOS los relojes del simulador
@@ -22,6 +44,8 @@ const DEFAULT_CONFIG = {
   // avanzando sola desde el momento en que se aplicó (setAt).
   time: { enabled: false, value: "04:56", dateText: "", setAt: 0 },
   wallpaperUrl: "",
+  iconStyle: { shape: "rounded", theme: "color" },
+  apps: DEFAULT_APPS,
   contact: {
     name: "Mamá",
     number: "+56 9 1234 5678",
@@ -251,4 +275,4 @@ export function createSync(sessionId) {
     : new LocalBackend(sessionId);
 }
 
-export { DEFAULT_CONFIG, isFirebaseConfigured };
+export { DEFAULT_CONFIG, DEFAULT_APPS, isFirebaseConfigured };
