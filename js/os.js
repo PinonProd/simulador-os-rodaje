@@ -45,23 +45,28 @@ export const ICONS = {
   qsFlashlight: `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M9 2h6v4l-2 2v12l-1 2-1-2V8L9 6z"/></svg>`,
   qsRotate: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M18 8a6 6 0 10-11 3.5" stroke-linecap="round" fill="none"/><path d="M8.5 8.5L7 11.5l3.3.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
   qsDnd: `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm-5 9h10v2H7v-2z"/></svg>`,
+  // Buscador de Google (decorativo) y app "Play Store"
+  googleG: `<svg viewBox="0 0 48 48" width="22" height="22"><path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h11.8c-.5 2.7-2.1 5-4.4 6.6v5.4h7.1c4.2-3.9 6.6-9.6 6.6-16.5z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-2 14.5-5.3l-7.1-5.4c-2 1.3-4.5 2.1-7.4 2.1-5.7 0-10.5-3.8-12.2-9H4.5v5.6C8.1 40.9 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.8 28.4c-.4-1.3-.7-2.7-.7-4.4s.2-3 .7-4.4v-5.6H4.5C3 16.9 2 20.3 2 24s1 7.1 2.5 10l7.3-5.6z"/><path fill="#EA4335" d="M24 10.9c3.2 0 6 1.1 8.3 3.3l6.2-6.2C34.9 4.4 29.9 2 24 2 15.4 2 8.1 7.1 4.5 14l7.3 5.6c1.7-5.2 6.5-9 12.2-9.7z"/></svg>`,
+  gsSparkle: `<svg viewBox="0 0 24 24" width="18" height="18" fill="#5f6368"><path d="M11 2l1.6 5.4L18 9l-5.4 1.6L11 16l-1.6-5.4L4 9l5.4-1.6L11 2zm7.5 9l.8 2.7L22 14.5l-2.7.8-.8 2.7-.8-2.7L15 14.5l2.7-.8.8-2.7z"/></svg>`,
+  gsMic: `<svg viewBox="0 0 24 24" width="18" height="18" fill="#5f6368"><path d="M12 15a3 3 0 003-3V6a3 3 0 00-6 0v6a3 3 0 003 3zm5-3a5 5 0 01-10 0H5a7 7 0 006 6.9V21h2v-2.1A7 7 0 0019 12h-2z"/></svg>`,
+  gsLens: `<svg viewBox="0 0 24 24" width="18" height="18"><path fill="#4285F4" d="M12 2a10 10 0 00-8.7 5H12z"/><path fill="#EA4335" d="M3.3 7a10 10 0 000 10L8.2 12z"/><path fill="#FBBC05" d="M3.3 17a10 10 0 008.7 5v-5z"/><path fill="#34A853" d="M12 22a10 10 0 008.7-5H12z"/><circle cx="12" cy="12" r="4.2" fill="#fff"/><circle cx="12" cy="12" r="3" fill="#5f6368"/></svg>`,
+  playstore: `<svg viewBox="0 0 24 24" width="26" height="26"><defs><linearGradient id="psA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#00E4FF"/><stop offset="1" stop-color="#00B0FF"/></linearGradient><linearGradient id="psB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFD800"/><stop offset="1" stop-color="#FFA000"/></linearGradient></defs><path fill="url(#psA)" d="M4 3.5v17c0 .4.2.7.5.9L14 12 4.5 2.6c-.3.2-.5.5-.5.9z"/><path fill="#00F076" d="M14 12L4.5 2.6c.2-.1.5-.1.8 0l11 6.2L14 12z"/><path fill="#FF3A44" d="M14 12l2.3 3.2-11 6.2c-.3.1-.6.1-.8 0L14 12z"/><path fill="url(#psB)" d="M16.3 8.8L14 12l2.3 3.2 3.9-2.2c.6-.3.6-1.2 0-1.6l-3.9-2.6z"/></svg>`,
 };
 
 const APPS = [
-  { id: "phone", label: "Teléfono", icon: "phone", color: "#2fbf59" },
-  { id: "message", label: "Mensajes", icon: "message", color: "#3b82f6" },
-  { id: "camera", label: "Cámara", icon: "camera", color: "#6b7280" },
-  { id: "clock", label: "Reloj", icon: "clock", color: "#374151" },
-  { id: "settings", label: "Ajustes", icon: "settings", color: "#5f6368" },
-  { id: "gallery", label: "Fotos", icon: "gallery", color: "#f59e0b" },
-  { id: "browser", label: "Navegador", icon: "browser", color: "#4285f4" },
-  { id: "calculator", label: "Calculadora", icon: "calculator", color: "#4b5563" },
-  { id: "calendar", label: "Calendario", icon: "calendar", color: "#1a73e8" },
-  { id: "maps", label: "Mapas", icon: "maps", color: "#34a853" },
-  { id: "mail", label: "Correo", icon: "mail", color: "#ea4335" },
-  { id: "store", label: "Tienda", icon: "store", color: "#0f9d58" },
+  { id: "phone", label: "Teléfono", icon: "phone", color: "#2fbf59", home: false, dock: true },
+  { id: "message", label: "Mensajes", icon: "message", color: "#3b82f6", home: false, dock: true },
+  { id: "camera", label: "Cámara", icon: "camera", color: "#6b7280", home: false, dock: true },
+  { id: "clock", label: "Reloj", icon: "clock", color: "#374151", home: false, dock: true },
+  { id: "settings", label: "Ajustes", icon: "settings", color: "#5f6368", home: true, dock: false },
+  { id: "gallery", label: "Fotos", icon: "gallery", color: "#f59e0b", home: true, dock: false },
+  { id: "browser", label: "Navegador", icon: "browser", color: "#4285f4", home: true, dock: false },
+  { id: "calculator", label: "Calculadora", icon: "calculator", color: "#4b5563", home: true, dock: false },
+  { id: "calendar", label: "Calendario", icon: "calendar", color: "#1a73e8", home: true, dock: false },
+  { id: "maps", label: "Mapas", icon: "maps", color: "#34a853", home: true, dock: false },
+  { id: "mail", label: "Correo", icon: "mail", color: "#ea4335", home: true, dock: false },
+  { id: "store", label: "Tienda", icon: "store", color: "#0f9d58", home: true, dock: false },
 ];
-const DOCK_IDS = ["phone", "message", "camera", "clock"];
 
 function el(tag, className, html) {
   const e = document.createElement(tag);
@@ -109,9 +114,29 @@ export class OS {
         </div>
       </div>
       <div id="homescreen" class="pane">
-        <div class="home-widget"><div class="w-time"></div><div class="w-date"></div></div>
+        <div class="home-top">
+          <div class="home-widget"><div class="w-time"></div><div class="w-date"></div></div>
+          <div class="weather-widget">
+            <div class="ww-icon"></div>
+            <div>
+              <div class="ww-temp"></div>
+              <div class="ww-cond"></div>
+              <div class="ww-city"></div>
+            </div>
+          </div>
+          <div class="google-searchbar">
+            ${ICONS.googleG}
+            <div class="gs-icons">${ICONS.gsSparkle}${ICONS.gsMic}${ICONS.gsLens}</div>
+          </div>
+        </div>
         <div class="app-grid"></div>
+        <div class="page-dots"><span class="active"></span><span></span><span></span></div>
         <div class="dock"></div>
+        <div class="nav-buttons">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><rect x="3" y="6" width="18" height="2.2" rx="1"/><rect x="3" y="11" width="18" height="2.2" rx="1"/><rect x="3" y="16" width="18" height="2.2" rx="1"/></svg>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/></svg>
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        </div>
       </div>
       <div id="appdrawer" class="pane">
         <div class="drawer-search">🔍 Buscar en el teléfono</div>
@@ -143,6 +168,11 @@ export class OS {
     this.$homeGrid = this.root.querySelector(".app-grid");
     this.$dock = this.root.querySelector(".dock");
     this.$drawerGrid = this.root.querySelector(".drawer-grid");
+    this.$weather = this.root.querySelector(".weather-widget");
+    this.$searchbar = this.root.querySelector(".google-searchbar");
+    this.$pageDots = this.root.querySelector(".page-dots");
+    this.$navButtons = this.root.querySelector(".nav-buttons");
+    this.$homeClockWidget = this.root.querySelector("#homescreen .home-widget");
     this.$shade = this.root.querySelector("#shade");
     this.$shadeQsGrid = this.root.querySelector(".shade-qs-grid");
     this.$shadeNotiList = this.root.querySelector(".shade-noti-list");
@@ -221,13 +251,22 @@ export class OS {
   _iconNode(app) {
     const wrap = el("div", "app-icon-wrap");
     wrap.dataset.app = app.id;
-    const glyph = app.emoji
-      ? `<span style="font-size:27px;line-height:1;">${app.emoji}</span>`
-      : (ICONS[app.icon] || `<span style="font-size:22px;font-weight:700;">${(app.label || "?")[0].toUpperCase()}</span>`);
     const badge = Number(app.badge) > 0
       ? `<span class="app-badge">${app.badge > 99 ? "99+" : app.badge}</span>`
       : "";
-    wrap.innerHTML = `<div class="app-icon" style="background:${app.color || "#4b5563"}">${glyph}</div>${badge}<div class="app-label">${app.label}</div>`;
+    let iconHtml;
+    if (app.icon === "folder") {
+      // Carpeta decorativa: grilla 2x2 de colores (ej. la carpeta "Google")
+      const colors = app.folderColors || ["#4285F4", "#EA4335", "#FBBC05", "#34A853"];
+      iconHtml = `<div class="app-icon folder-icon" style="background:${app.color || "#1f1f22"}">${colors
+        .map((c) => `<span style="background:${c}"></span>`).join("")}</div>`;
+    } else {
+      const glyph = app.emoji
+        ? `<span style="font-size:27px;line-height:1;">${app.emoji}</span>`
+        : (ICONS[app.icon] || `<span style="font-size:22px;font-weight:700;">${(app.label || "?")[0].toUpperCase()}</span>`);
+      iconHtml = `<div class="app-icon" style="background:${app.color || "#4b5563"}">${glyph}</div>`;
+    }
+    wrap.innerHTML = `${iconHtml}${badge}<div class="app-label">${app.label}</div>`;
     wrap.addEventListener("click", (e) => this._ripple(e, wrap) && this.launchApp(app.id, wrap));
     return wrap;
   }
@@ -274,11 +313,37 @@ export class OS {
     this.$statusbar.querySelector(".sb-wifi").innerHTML = d.wifi ? ICONS.wifi : "";
     this.$statusbar.querySelector(".sb-battery").innerHTML = ICONS.battery(d.battery ?? 80);
     this.$statusbar.querySelector(".battery-pct").textContent = `${d.battery ?? 80}%`;
+
+    // Fondo de pantalla: URL propia, o uno de los degradados prediseñados.
+    const home = cfg.home || {};
+    this.$home.classList.remove("wallpaper-gradient");
     if (cfg.wallpaperUrl) {
       this.$home.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.55)), url("${cfg.wallpaperUrl}")`;
       this.$home.style.backgroundSize = "cover";
       this.$home.style.backgroundPosition = "center";
+    } else {
+      this.$home.style.backgroundImage = "";
+      if (home.wallpaperPreset === "gradient") this.$home.classList.add("wallpaper-gradient");
     }
+
+    // Widgets y layout de la pantalla de inicio
+    this.$homeClockWidget.classList.toggle("hidden", !home.showClockWidget);
+    this.$searchbar.classList.toggle("show", home.showSearchBar !== false);
+    this.$pageDots.classList.toggle("show", home.showPageDots !== false);
+    const buttons = home.navStyle === "buttons";
+    this.$navButtons.classList.toggle("show", buttons);
+    this.root.classList.toggle("nav-buttons-mode", buttons);
+
+    const w = cfg.weather || {};
+    this.$weather.classList.toggle("show", !!w.enabled);
+    if (w.enabled) {
+      const WEATHER_EMOJI = { sun: "☀️", cloud: "☁️", rain: "🌧️", storm: "⛈️", snow: "❄️" };
+      this.$weather.querySelector(".ww-icon").textContent = WEATHER_EMOJI[w.icon] || "☁️";
+      this.$weather.querySelector(".ww-temp").textContent = `${w.temp ?? 20}${w.unit || "°"}`;
+      this.$weather.querySelector(".ww-cond").textContent = w.condition || "";
+      this.$weather.querySelector(".ww-city").textContent = w.city || "";
+    }
+
     // Estilo de íconos: forma y tema (de color / oscuro tipo tema One UI)
     const is = cfg.iconStyle || {};
     this.root.classList.remove("icon-shape-circle", "icon-shape-square", "icon-shape-rounded");

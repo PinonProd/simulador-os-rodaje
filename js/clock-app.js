@@ -4,7 +4,7 @@
 // vía control remoto (para no tener que esperar la hora real en el rodaje).
 // ============================================================================
 
-import { playAlarm, stopAll } from "./sound.js?v=4";
+import { playAlarm, stopAll } from "./sound.js?v=5";
 
 const LS_ALARMS = "pn_sim_alarms";
 

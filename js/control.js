@@ -1,4 +1,4 @@
-import { createSync, isFirebaseConfigured, DEFAULT_APPS } from "./sync.js?v=4";
+import { createSync, isFirebaseConfigured, DEFAULT_APPS } from "./sync.js?v=5";
 
 const $ = (id) => document.getElementById(id);
 const LS_LAST = "pn_ctrl_last_session";
@@ -33,6 +33,26 @@ function readDeviceForm() {
     battery: Number($("d-battery").value) || 84,
     signal: Number($("d-signal").value) || 4,
     wifi: $("d-wifi").checked,
+  };
+}
+
+function readHomeForm() {
+  return {
+    wallpaperPreset: $("h-wallpaper-preset").value,
+    navStyle: $("h-nav-style").value,
+    showClockWidget: $("h-show-clock").checked,
+    showSearchBar: $("h-show-search").checked,
+    showPageDots: $("h-show-dots").checked,
+  };
+}
+function readWeatherForm() {
+  return {
+    enabled: $("w-enabled").checked,
+    temp: Number($("w-temp").value) || 20,
+    unit: "°",
+    icon: $("w-icon").value,
+    condition: $("w-condition").value,
+    city: $("w-city").value,
   };
 }
 
@@ -121,6 +141,20 @@ function fillForms(cfg) {
     $("d-signal").value = cfg.device.signal ?? 4;
     $("d-wifi").checked = !!cfg.device.wifi;
   }
+  if (cfg.home) {
+    $("h-wallpaper-preset").value = cfg.home.wallpaperPreset || "gradient";
+    $("h-nav-style").value = cfg.home.navStyle || "gesture";
+    $("h-show-clock").checked = !!cfg.home.showClockWidget;
+    $("h-show-search").checked = cfg.home.showSearchBar !== false;
+    $("h-show-dots").checked = cfg.home.showPageDots !== false;
+  }
+  if (cfg.weather) {
+    $("w-enabled").checked = !!cfg.weather.enabled;
+    $("w-temp").value = cfg.weather.temp ?? 31;
+    $("w-icon").value = cfg.weather.icon || "storm";
+    $("w-condition").value = cfg.weather.condition || "";
+    $("w-city").value = cfg.weather.city || "";
+  }
   $("d-wallpaper").value = cfg.wallpaperUrl || "";
 }
 
@@ -182,6 +216,18 @@ $("addApp").addEventListener("click", () => {
     badge: 0, home: true, dock: false,
   });
   renderAppsEditor();
+});
+
+$("saveHome").addEventListener("click", () => {
+  if (!sync) return log("Conéctate primero a una sesión.");
+  sync.setConfig({ home: readHomeForm() });
+  log("Pantalla de inicio guardada.");
+});
+
+$("saveWeather").addEventListener("click", () => {
+  if (!sync) return log("Conéctate primero a una sesión.");
+  sync.setConfig({ weather: readWeatherForm() });
+  log("Widget de clima guardado.");
 });
 
 $("applyTime").addEventListener("click", () => {

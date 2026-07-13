@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Control remoto — Simulador</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="css/control.css?v=4">
+<link rel="stylesheet" href="css/control.css?v=5">
 </head>
 <body>
 <header>
@@ -143,12 +143,63 @@
   </div>
 
   <div class="card">
+    <h2>Pantalla de inicio</h2>
+    <div class="grid2">
+      <div class="field">
+        <label>Fondo de pantalla</label>
+        <select id="h-wallpaper-preset">
+          <option value="gradient">Degradado morado/azul (Now Bar)</option>
+          <option value="dark">Oscuro (por defecto)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Navegación</label>
+        <select id="h-nav-style">
+          <option value="gesture">Gestos (barra deslizante)</option>
+          <option value="buttons">Botones (◧ ○ ◁)</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Fondo de pantalla propio (URL, opcional — reemplaza al de arriba)</label><input id="d-wallpaper" placeholder="https://…"></div>
+    <div class="grid2">
+      <div class="field row-inline"><input type="checkbox" id="h-show-clock"><label style="margin:0;">Mostrar reloj grande en inicio</label></div>
+      <div class="field row-inline"><input type="checkbox" id="h-show-search" checked><label style="margin:0;">Mostrar buscador de Google</label></div>
+    </div>
+    <div class="field row-inline"><input type="checkbox" id="h-show-dots" checked><label style="margin:0;">Mostrar puntos de página</label></div>
+    <div class="actions-row">
+      <button class="btn-outline" id="saveHome">Guardar pantalla de inicio</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Widget de clima</h2>
+    <div class="field row-inline"><input type="checkbox" id="w-enabled" checked><label style="margin:0;">Mostrar widget de clima</label></div>
+    <div class="grid2">
+      <div class="field"><label>Temperatura</label><input id="w-temp" type="number" value="31"></div>
+      <div class="field">
+        <label>Ícono</label>
+        <select id="w-icon">
+          <option value="sun">☀️ Soleado</option>
+          <option value="cloud">☁️ Nublado</option>
+          <option value="rain">🌧️ Lluvia</option>
+          <option value="storm" selected>⛈️ Tormenta</option>
+          <option value="snow">❄️ Nieve</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Condición</label><input id="w-condition" placeholder="Posibles tormentas cerca de la 1 p. m."></div>
+    <div class="field"><label>Ciudad</label><input id="w-city" placeholder="Santiago"></div>
+    <div class="actions-row">
+      <button class="btn-outline" id="saveWeather">Guardar clima</button>
+    </div>
+  </div>
+
+  <div class="card">
     <h2>Dispositivo (status bar)</h2>
     <div class="grid2">
       <div class="field"><label>Batería (%)</label><input id="d-battery" type="number" min="1" max="100" value="84"></div>
       <div class="field"><label>Señal (0–4 barras)</label><input id="d-signal" type="number" min="0" max="4" value="4"></div>
     </div>
-    <div class="field"><label>Fondo de pantalla (URL, opcional)</label><input id="d-wallpaper" placeholder="https://…"></div>
     <div class="field row-inline"><input type="checkbox" id="d-wifi" checked><label style="margin:0;">Wi-Fi activo</label></div>
     <div class="actions-row">
       <button class="btn-outline" id="saveDevice">Guardar dispositivo</button>
@@ -161,6 +212,6 @@
   </div>
 </main>
 
-<script type="module" src="js/control.js?v=4"></script>
+<script type="module" src="js/control.js?v=5"></script>
 </body>
 </html>

@@ -12,7 +12,7 @@
 // navegador. Sirve para probar todo el flujo antes de configurar Firebase.
 // ============================================================================
 
-import { FIREBASE_CONFIG, isFirebaseConfigured } from "./firebase-config.js?v=4";
+import { FIREBASE_CONFIG, isFirebaseConfigured } from "./firebase-config.js?v=5";
 
 const LS_PREFIX = "pn_sim_";
 
@@ -35,6 +35,9 @@ const DEFAULT_APPS = [
   { id: "maps", label: "Mapas", icon: "maps", emoji: "", color: "#34a853", badge: 0, home: true, dock: false },
   { id: "mail", label: "Correo", icon: "mail", emoji: "", color: "#ea4335", badge: 0, home: true, dock: false },
   { id: "store", label: "Tienda", icon: "store", emoji: "", color: "#0f9d58", badge: 0, home: true, dock: false },
+  { id: "playstore", label: "Play Store", icon: "playstore", emoji: "", color: "#ffffff", badge: 2, home: true, dock: false },
+  { id: "googlefolder", label: "Google", icon: "folder", emoji: "", color: "#26282e", badge: 1, home: true, dock: false,
+    folderColors: ["#4285F4", "#EA4335", "#FBBC05", "#34A853"] },
 ];
 
 const DEFAULT_CONFIG = {
@@ -46,6 +49,21 @@ const DEFAULT_CONFIG = {
   wallpaperUrl: "",
   iconStyle: { shape: "rounded", theme: "color" },
   apps: DEFAULT_APPS,
+  home: {
+    wallpaperPreset: "gradient", // "gradient" | "dark" (se ignora si wallpaperUrl tiene valor)
+    showClockWidget: false,
+    showSearchBar: true,
+    showPageDots: true,
+    navStyle: "gesture", // "gesture" | "buttons"
+  },
+  weather: {
+    enabled: true,
+    temp: 31,
+    unit: "°",
+    condition: "Posibles tormentas cerca de la 1 p. m.",
+    city: "Santiago",
+    icon: "storm", // sun | cloud | rain | storm | snow
+  },
   contact: {
     name: "Mamá",
     number: "+56 9 1234 5678",
